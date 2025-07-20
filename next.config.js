@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // No custom webpack configuration needed for pdf-parse
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins.push(
+        new (require('webpack').IgnorePlugin)({
+          resourceRegExp: /^(pdf-parse|mammoth)$/,
+        })
+      );
+    }
+    return config;
+  },
 };
 
 module.exports = nextConfig;
