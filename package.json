@@ -14,5 +14,10 @@
     "bootstrap": "^5.3.7",
     "cheerio": "^1.1.0",
     "next": "^15.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.15",
+    "@types/react": "^19.1.8",
+    "typescript": "^5.8.3"
   }
 }
