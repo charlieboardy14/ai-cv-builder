@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
-import pdfParse from 'pdf-parse';
+import * as pdfjs from 'pdfjs-dist';
 import mammoth from 'mammoth';
+
+// Set the worker source for pdfjs-dist
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,8 +21,14 @@ export async function POST(req: NextRequest) {
 
     try {
       if (fileExtension === 'pdf') {
-        const data = await pdfParse(fileBuffer);
-        extractedText = data.text;
+        const pdfDocument = await pdfjs.getDocument({ data: fileBuffer }).promise;
+        let fullText = '';
+        for (let i = 1; i <= pdfDocument.numPages; i++) {
+          const page = await pdfDocument.getPage(i);
+          const textContent = await page.getTextContent();
+          fullText += textContent.items.map((item: any) => item.str).join(' ') + '\n';
+        }
+        extractedText = fullText;
       } else if (fileExtension === 'docx') {
         const result = await mammoth.extractRawText({ arrayBuffer: fileBuffer.buffer });
         extractedText = result.value;

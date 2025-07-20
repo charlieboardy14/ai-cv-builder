@@ -17,6 +17,7 @@
     "mammoth": "^1.9.1",
     "next": "^15.4.2",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^5.3.93",
     "react-markdown": "^10.1.0"
   },
   "devDependencies": {
