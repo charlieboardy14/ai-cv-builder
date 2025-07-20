@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
-import * as pdfjs from 'pdfjs-dist/build/pdf';
+import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
 import mammoth from 'mammoth';
-
-
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,6 +18,8 @@ export async function POST(req: NextRequest) {
 
     try {
       if (fileExtension === 'pdf') {
+        // PDF.js requires a worker, but for Node.js, it's handled differently
+        // We don't need to set GlobalWorkerOptions.workerSrc here for server-side
         const pdfDocument = await pdfjs.getDocument({ data: fileBuffer }).promise;
         let fullText = '';
         for (let i = 1; i <= pdfDocument.numPages; i++) {
