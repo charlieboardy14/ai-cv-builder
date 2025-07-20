@@ -1,63 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { IncomingForm } from 'formidable';
 import fs from 'fs';
 import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
 
-// Helper function to parse form data
-function parseForm(req: NextRequest): Promise<{ fields: any; files: any }> {
-  return new Promise((resolve, reject) => {
-    const form = new IncomingForm();
-
-    form.parse(req as any, (err, fields, files) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve({ fields, files });
-    });
-  });
-}
-
 export async function POST(req: NextRequest) {
   try {
-    const { files } = await parseForm(req);
-
-    const cvFile = files.cvFile?.[0];
+    const formData = await req.formData();
+    const cvFile = formData.get('cvFile') as File | null;
 
     if (!cvFile) {
       return NextResponse.json({ error: 'No file uploaded.' }, { status: 400 });
     }
 
     let extractedText = '';
+    const fileBuffer = Buffer.from(await cvFile.arrayBuffer());
+    const fileExtension = cvFile.name.split('.').pop()?.toLowerCase();
 
     try {
-      const filePath = cvFile.filepath;
-      const fileExtension = cvFile.originalFilename?.split('.').pop()?.toLowerCase();
-
       if (fileExtension === 'pdf') {
-        const dataBuffer = fs.readFileSync(filePath);
-        const data = await pdfParse(dataBuffer);
+        const data = await pdfParse(fileBuffer);
         extractedText = data.text;
       } else if (fileExtension === 'docx') {
-        const dataBuffer = fs.readFileSync(filePath);
-        const result = await mammoth.extractRawText({ arrayBuffer: dataBuffer.buffer });
+        const result = await mammoth.extractRawText({ arrayBuffer: fileBuffer.buffer });
         extractedText = result.value;
       } else if (fileExtension === 'md') {
-        extractedText = fs.readFileSync(filePath, 'utf8');
+        extractedText = fileBuffer.toString('utf8');
       } else {
-        return NextResponse.json({ error: 'Unsupported file type. Only PDF and DOCX are supported.' }, { status: 400 });
+        return NextResponse.json({ error: 'Unsupported file type. Only PDF, DOCX, and MD are supported.' }, { status: 400 });
       }
-
-      // Clean up the temporary file created by formidable
-      fs.unlinkSync(filePath);
 
       return NextResponse.json({ text: extractedText });
     } catch (parseError: any) {
       console.error('Error parsing CV file:', parseError);
-      // Ensure temporary file is cleaned up even on parse error
-      if (cvFile.filepath && fs.existsSync(cvFile.filepath)) {
-        fs.unlinkSync(cvFile.filepath);
-      }
       return NextResponse.json({ error: `Error parsing CV file: ${parseError.message}` }, { status: 500 });
     }
   } catch (error: any) {
