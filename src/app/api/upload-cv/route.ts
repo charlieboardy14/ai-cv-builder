@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
-import * as pdfjs from 'pdfjs-dist';
+import * as pdfjs from 'pdfjs-dist/build/pdf';
 import mammoth from 'mammoth';
 
-// Set the worker source for pdfjs-dist
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
 
 export async function POST(req: NextRequest) {
   try {
