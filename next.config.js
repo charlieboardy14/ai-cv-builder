@@ -4,7 +4,7 @@ const nextConfig = {
     if (isServer) {
       config.plugins.push(
         new (require('webpack').IgnorePlugin)({
-          resourceRegExp: /\.\/test\/data\/.*\.pdf$/,
+          resourceRegExp: /\/(test|tests)\/data\//,
           contextRegExp: /pdf-parse|mammoth/,
         })
       );
