@@ -159,6 +159,7 @@ export default function Home() {
 
       {activeTab === 'tailor' && (
         <form onSubmit={handleSubmit}>
+          <h2>Tailor Your CV</h2>
           <div className="mb-3">
             <label htmlFor="cvUpload" className="form-label">Upload CV (PDF/DOCX/MD)</label>
             <input
@@ -171,36 +172,6 @@ export default function Home() {
             />
             {uploading && <div className="text-info">Uploading and parsing...</div>}
           </div>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">Name</label>
-            <input type="text" className="form-control" id="name" name="name" value={cv.name} onChange={handleCvChange} required />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input type="email" className="form-control" id="email" name="email" value={cv.email} onChange={handleCvChange} required />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="summary" className="form-label">Summary</label>
-            <textarea className="form-control" id="summary" name="summary" rows={5} value={cv.summary} onChange={handleCvChange} required></textarea>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="experience" className="form-label">Work Experience</label>
-            <textarea className="form-control" id="experience" name="experience" rows={7} value={cv.experience} onChange={handleCvChange} required></textarea>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="education" className="form-label">Education</label>
-            <textarea className="form-control" id="education" name="education" rows={3} value={cv.education} onChange={handleCvChange} required></textarea>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="skills" className="form-label">Skills</label>
-            <textarea className="form-control" id="skills" name="skills" rows={3} value={cv.skills} onChange={handleCvChange} required></textarea>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'tailor' && (
-        <form onSubmit={handleSubmit}>
-          <h2>Job Link</h2>
           <div className="mb-3">
               <label htmlFor="jobUrl" className="form-label">Indeed Job URL</label>
               <input
@@ -219,7 +190,7 @@ export default function Home() {
 
           {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-          <h2 className="mt-4">Tailored CV</h2>
+          <h2 className="mt-4">Tailored CV Output</h2>
           <div className="card">
             <div className="card-body">
               {isLoading && (
