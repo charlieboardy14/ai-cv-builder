@@ -2,9 +2,11 @@
 const nextConfig = {
   webpack: (config, { isServer }) => {
     if (isServer) {
-      config.externals.push(
-        // Exclude test data from pdf-parse and similar libraries
-        '^(pdf-parse|mammoth)\/test\/data\/.*'
+      config.plugins.push(
+        new (require('webpack').IgnorePlugin)({
+          resourceRegExp: /\.\/test\/data\/.*\.pdf$/,
+          contextRegExp: /pdf-parse|mammoth/,
+        })
       );
     }
     return config;
