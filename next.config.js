@@ -4,7 +4,7 @@ const nextConfig = {
     if (isServer) {
       config.externals.push(
         // Exclude test data from pdf-parse and similar libraries
-        /^(pdf-parse|mammoth)\/test\/data\/.*
+        '^(pdf-parse|mammoth)\/test\/data\/.*'
       );
     }
     return config;
