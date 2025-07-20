@@ -88,7 +88,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cv, jobUrl }),
+        body: JSON.stringify({ cv, jobUrl, jobDescriptionText }),
       });
 
       if (!response.ok) {
