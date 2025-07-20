@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals.push('pdf-parse', 'mammoth');
-    }
-    return config;
-  },
+  // No custom webpack configuration needed for pdf-parse
 };
 
 module.exports = nextConfig;

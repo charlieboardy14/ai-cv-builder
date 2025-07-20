@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
-import * as pdfjs from 'pdfjs-dist/legacy/build/pdf';
+import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
 
 export async function POST(req: NextRequest) {
@@ -18,16 +18,8 @@ export async function POST(req: NextRequest) {
 
     try {
       if (fileExtension === 'pdf') {
-        // PDF.js requires a worker, but for Node.js, it's handled differently
-        // We don't need to set GlobalWorkerOptions.workerSrc here for server-side
-        const pdfDocument = await pdfjs.getDocument({ data: fileBuffer }).promise;
-        let fullText = '';
-        for (let i = 1; i <= pdfDocument.numPages; i++) {
-          const page = await pdfDocument.getPage(i);
-          const textContent = await page.getTextContent();
-          fullText += textContent.items.map((item: any) => item.str).join(' ') + '\n';
-        }
-        extractedText = fullText;
+        const data = await pdfParse(fileBuffer);
+        extractedText = data.text;
       } else if (fileExtension === 'docx') {
         const result = await mammoth.extractRawText({ arrayBuffer: fileBuffer.buffer });
         extractedText = result.value;
