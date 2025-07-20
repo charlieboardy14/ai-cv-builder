@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
         const dataBuffer = fs.readFileSync(filePath);
         const result = await mammoth.extractRawText({ arrayBuffer: dataBuffer.buffer });
         extractedText = result.value;
+      } else if (fileExtension === 'md') {
+        extractedText = fs.readFileSync(filePath, 'utf8');
       } else {
         return NextResponse.json({ error: 'Unsupported file type. Only PDF and DOCX are supported.' }, { status: 400 });
       }

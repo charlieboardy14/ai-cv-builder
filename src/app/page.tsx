@@ -130,13 +130,18 @@ export default function Home() {
       {activeTab === 'writer' && (
         <div>
           <h2>Your CV Content</h2>
+          </div>
+      )}
+
+      {activeTab === 'tailor' && (
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="cvUpload" className="form-label">Upload CV (PDF/DOCX)</label>
+            <label htmlFor="cvUpload" className="form-label">Upload CV (PDF/DOCX/MD)</label>
             <input
               type="file"
               className="form-control"
               id="cvUpload"
-              accept=".pdf,.docx"
+              accept=".pdf,.docx,.md"
               onChange={handleFileUpload}
               disabled={uploading}
             />
