@@ -14,6 +14,7 @@ export default function Home() {
     skills: '',
   });
   const [jobUrl, setJobUrl] = useState('');
+  const [jobDescriptionText, setJobDescriptionText] = useState('');
   const [tailoredCv, setTailoredCv] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -173,7 +174,18 @@ export default function Home() {
             {uploading && <div className="text-info">Uploading and parsing...</div>}
           </div>
           <div className="mb-3">
-              <label htmlFor="jobUrl" className="form-label">Indeed Job URL</label>
+            <label htmlFor="jobDescriptionText" className="form-label">Or Paste Job Description Here</label>
+            <textarea
+              className="form-control"
+              id="jobDescriptionText"
+              rows={10}
+              value={jobDescriptionText}
+              onChange={(e) => setJobDescriptionText(e.target.value)}
+              placeholder="Paste the full job description here if you cannot use the URL."
+            ></textarea>
+          </div>
+          <div className="mb-3">
+              <label htmlFor="jobUrl" className="form-label">Indeed Job URL (Optional if pasting description)</label>
               <input
                   type="url"
                   className="form-control"
@@ -181,7 +193,6 @@ export default function Home() {
                   value={jobUrl}
                   onChange={(e) => setJobUrl(e.target.value)}
                   placeholder="https://www.indeed.com/viewjob?jk=..."
-                  required
               />
           </div>
           <button type="submit" className="btn btn-primary w-100" disabled={isLoading || uploading}>

@@ -7,19 +7,32 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: NextRequest) {
   try {
-    const { cv, jobUrl } = await req.json();
+    const { cv, jobUrl, jobDescriptionText } = await req.json();
 
-    // 1. Fetch the job description from the Indeed URL
-    const { data: html } = await axios.get(jobUrl, {
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    let finalJobDescription = jobDescriptionText;
+
+    // If no manual job description is provided, try to fetch from URL
+    if (!finalJobDescription && jobUrl) {
+      try {
+        const { data: html } = await axios.get(jobUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
+        const $ = cheerio.load(html);
+        finalJobDescription = $('#jobDescriptionText').text().trim();
+
+        if (!finalJobDescription) {
+          console.warn('Could not extract job description from the provided URL.');
         }
-    });
-    const $ = cheerio.load(html);
-    const jobDescription = $('#jobDescriptionText').text().trim();
+      } catch (scrapeError: any) {
+        console.error('Error scraping job URL:', scrapeError.message);
+        // Do not return error here, allow tailoring with available data or warn user
+      }
+    }
 
-    if (!jobDescription) {
-      return NextResponse.json({ error: 'Could not extract job description from the URL.' }, { status: 400 });
+    if (!finalJobDescription) {
+      return NextResponse.json({ error: 'No job description provided or could be extracted. Please paste it manually.' }, { status: 400 });
     }
 
     // 2. Use Gemini to tailor the CV
@@ -38,7 +51,7 @@ export async function POST(req: NextRequest) {
       Skills: ${cv.skills}
 
       **Job Description:**
-      ${jobDescription}
+      ${finalJobDescription}
 
       **Tailored CV (in Markdown format):**
     `;
