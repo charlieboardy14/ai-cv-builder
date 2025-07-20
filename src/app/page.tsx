@@ -15,6 +15,7 @@ export default function Home() {
   });
   const [jobUrl, setJobUrl] = useState('');
   const [jobDescriptionText, setJobDescriptionText] = useState('');
+  const [uploadedCvContent, setUploadedCvContent] = useState('');
   const [tailoredCv, setTailoredCv] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -63,11 +64,7 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setCv((prevCv) => ({
-        ...prevCv,
-        summary: data.text, // Assuming the parsed text can be set as summary or a new field
-        // You might want to parse the uploaded CV more granularly here
-      }));
+      setUploadedCvContent(data.text);
       alert('CV uploaded and parsed successfully!');
     } catch (err: any) {
       setError(err.message);
@@ -88,7 +85,7 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cv, jobUrl, jobDescriptionText }),
+        body: JSON.stringify({ cv, jobUrl, jobDescriptionText, uploadedCvContent }),
       });
 
       if (!response.ok) {

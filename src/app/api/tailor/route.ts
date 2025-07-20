@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: NextRequest) {
   try {
-    const { cv, jobUrl, jobDescriptionText } = await req.json();
+    const { cv, jobUrl, jobDescriptionText, uploadedCvContent } = await req.json();
 
     let finalJobDescription = jobDescriptionText;
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         finalJobDescription = $('#jobDescriptionText').text().trim();
 
         if (!finalJobDescription) {
-          console.warn('Could not extract job description from the provided URL.');
+          console.warn('Could not extract job description from the URL.');
         }
       } catch (scrapeError: any) {
         console.error('Error scraping job URL:', scrapeError.message);
@@ -35,20 +35,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No job description provided or could be extracted. Please paste it manually.' }, { status: 400 });
     }
 
+    // Determine which CV content to use
+    let cvContentForGemini = '';
+    if (uploadedCvContent) {
+      cvContentForGemini = uploadedCvContent;
+    } else {
+      cvContentForGemini = `
+        Name: ${cv.name}
+        Email: ${cv.email}
+        Summary: ${cv.summary}
+        Experience: ${cv.experience}
+        Education: ${cv.education}
+        Skills: ${cv.skills}
+      `;
+    }
+
     // 2. Use Gemini to tailor the CV
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `
-      Based on the following CV and job description, please rewrite the CV to be perfectly tailored for the job.
+      Based on the following CV content and job description, please rewrite the CV to be perfectly tailored for the job.
       Make sure to highlight the most relevant skills and experience.
 
-      **My CV:**
-      Name: ${cv.name}
-      Email: ${cv.email}
-      Summary: ${cv.summary}
-      Experience: ${cv.experience}
-      Education: ${cv.education}
-      Skills: ${cv.skills}
+      **My CV Content:**
+      ${cvContentForGemini}
 
       **Job Description:**
       ${finalJobDescription}
