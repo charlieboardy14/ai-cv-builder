@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       **Job Description:**
       ${jobDescription}
 
-      **Tailored CV:**
+      **Tailored CV (in Markdown format):**
     `;
 
     const result = await model.generateContent(prompt);

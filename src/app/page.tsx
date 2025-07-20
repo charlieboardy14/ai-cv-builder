@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export default function Home() {
   const [cv, setCv] = useState({
@@ -117,7 +118,7 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-                <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>{tailoredCv}</pre>
+                <ReactMarkdown>{tailoredCv}</ReactMarkdown>
               </div>
             </div>
           </div>

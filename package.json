@@ -13,7 +13,8 @@
     "axios": "^1.10.0",
     "bootstrap": "^5.3.7",
     "cheerio": "^1.1.0",
-    "next": "^15.4.2"
+    "next": "^15.4.2",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.15",
